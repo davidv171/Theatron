@@ -1,5 +1,6 @@
+oauth="$(cat oauth|tr -d '\n')"
 channel=$(curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
     -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
-    -H 'Authorization: OAuth 8zby9dk50bri0n75enbu0nwjpyg0qq' \ -X GET 'https://api.twitch.tv/kraken/streams/followed' | jq -r '.streams[] | .channel| .name' | rofi -dmenu)
+    -H "Authorization: OAuth $oauth" \ -X GET 'https://api.twitch.tv/kraken/streams/followed' | jq -c '.streams[] | .channel| {Streamer:.name,playing:.game}' | tr -d '{' | tr -d '}' |tr '"' ' ' | rofi -dmenu)
 streamlink www.twitch.tv/$channel best
 
