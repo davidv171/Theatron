@@ -1,4 +1,4 @@
-quality="audio_only\nworst\n360p\n480p\n720p\n720p60\nbest"
+quality="best\n720p60\n720p\n480p\n360p\naudio_only"
 oauth="$(cat oauth|tr -d '\n')"
 channel=$(curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
     -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
