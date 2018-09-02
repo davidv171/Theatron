@@ -1,5 +1,6 @@
 cd $(dirname "$0")
-source ~/Documents/dev/py/Threatron/config.sh
+config=$(readlink -f config.sh)
+source $config
 quality="best\n720p60\n720p\n480p\n360p\naudio_only"
 oauth="$(cat oauth|tr -d '\n')"
 if [ $vod_mode = "false" ] ;
