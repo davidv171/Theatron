@@ -36,7 +36,7 @@ The repo contains an example configuration. The comments should explain everythi
 
 In case you ever change your default configuration, this is an example of it:
 
-
+```
 
 #dont ask for quality, always just run the best one, always worst might be implemented if anyone asks
 always_best="true"
@@ -51,14 +51,13 @@ vod_mode="false"
  #if true, opens up a browser window with the chat popup mode of the picked streamer, does so not knowingly if the stream loaded or not
 popup_chat="true"
 
+```
+
 ## TODO
 
 - Extensibility, modularity, basically let the user decide on every part of the program
 
 - Usability without oauth! This will probably be implemented in python
 
-- Display current viewers
-
 - Let user decide on output
 
-- Rofi choice for video quality
