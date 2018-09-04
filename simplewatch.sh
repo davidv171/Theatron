@@ -18,7 +18,6 @@ then
     video=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
 	-H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
 	-H "Authorization: OAuth $oauth" \ -X GET "https://api.twitch.tv/kraken/channels/$id/videos?limit=25" | jq -c '.videos[] | {Created_at : .created_at , title : .title, url: .url}' | tr -d '{' | tr -d '}' | tr ',' ' ' | tr ':' ' ' | tr -d '"' | rofi -dmenu | awk 'NF>1{print $NF}')
-	streamlink $video best &
 fi
 picked_quality="best"
 if [ $always_best = "false" ] ;
@@ -29,5 +28,12 @@ if [ $popup_chat = "true" ] ;then
     echo xd
     xdg-open https://www.twitch.tv/popout/$channel/chat?popout= 
 fi
-streamlink www.twitch.tv/$channel $picked_quality &
+if [ $vod_mode = "true" ] ;
+then
+    streamlink $video $picked_quality &
+else
+    streamlink www.twitch.tv/$channel $picked_quality &
+fi
+
+
 
