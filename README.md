@@ -53,6 +53,20 @@ popup_chat="true"
 
 ```
 
+## Notifications
+
+Notifications are a separate script, that can be used without the main Theatron application OR A LOGIN. The script simply checks for a select few streamers you specify inside the notifconf.sh file and queries on a set interval(also specified by your config file)
+
+If there is any type of request, I can add a way to check without a config file with login, but most people only have notifications for the very few streamers they watch, so my thought process was that it was way easier to type them in.
+
+**Make an issue if you want this implemented**
+
+Or I will implement it when I get bored.
+
+### Dependencies
+
+Notifications script mostly only relies on jq and curl. After that it sends a "notify-send" that is then taken care of by a notification daemon.
+
 ## TODO
 
 - Extensibility, modularity, basically let the user decide on every part of the program
