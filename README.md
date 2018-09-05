@@ -30,6 +30,16 @@ Since this is still in early beta, we'll assume you installed using git.
 8. Tell me about bugs! This is a small, solo project and I appreciate any sort of bug reports, feature requests or even pull requests!
 
 
+## Running the script
+
+This script contains 4 main parts. A notification script(runs in the background and should only notify you when a streamer is coming online) and the simplewatch script. That is the script that shows you the streamers you are following that are currently online. Both need a config file. If you installed this through git, they have the example configs already.
+
+If you don't know how Rofi works:
+
+Use arrows or type into the search bar. You can type in a string that is NOT ON THE LIST. This is very important. So let's say you don't even follow "Imaqtpie", but you know he's on at this time, and want to watch. Simply type :
+
+Imaqtpie into the search bar and press enter. Hopefully streamlink will load up the video too. 
+
 ## Configuration
 
 The repo contains an example configuration. The comments should explain everything. Just like the oauth file this needs to be in the same directory as the script. 
