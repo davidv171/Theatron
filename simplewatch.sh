@@ -16,7 +16,8 @@ then
     fi
 fi
 
-if [ $vod_mode = "true" ] ;
+if [ $vod_mode = "true" ]
+    #čšć is used to sanitize output easier, so we don't remove every : but only the json key:value colon
 then
     channel=$(rofi -dmenu)
     id=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
@@ -24,7 +25,7 @@ then
     -X GET "https://api.twitch.tv/kraken/users?login=$channel" | jq -c '.users[] |._id'| tr -d '"' )
     video=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
 	-H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
-	-H "Authorization: OAuth $oauth" \ -X GET "https://api.twitch.tv/kraken/channels/$id/videos?limit=25" | jq -c '.videos[] | {Created_at : .created_at , title : .title, url: .url}' | tr -d '{' | tr -d '}' | tr ',' ' ' | tr ':' ' ' | tr -d '"' | rofi -dmenu | awk 'NF>1{print $NF}')
+	-H "Authorization: OAuth $oauth" \ -X GET "https://api.twitch.tv/kraken/channels/$id/videos?limit=$vod_mode_limit" | jq -c '.videos[] | {"čšć" : .title, "(čšć": .created_at, ") čšć": .url}'|tr -d '{' | tr -d '}' | tr ',' ' ' | tr -d '"' | sed 's/čšć://g'| rofi -dmenu | awk 'NF>1{print $NF}')
 fi
 picked_quality="best"
 if [ $always_best = "false" ] ;
