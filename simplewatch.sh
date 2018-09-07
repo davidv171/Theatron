@@ -22,9 +22,9 @@ then
     live=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
     -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \ -X GET "https://api.twitch.tv/kraken/streams/$id"| jq -j '.stream'| tr -d "\n")
     if  [[ $live != "null"* ]]; then
-	live="Live"
+	live="Channel is live, click me to watch"
     else
-	live=""
+	live="Channel is not yet live, use polling service and wait :( "
     fi
     video=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
 	-H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
