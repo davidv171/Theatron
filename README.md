@@ -1,5 +1,9 @@
 # Theatron
 
+## ALERT
+
+**NEWEST VLC VERSION(3.0.4-0) does NOT WORK WITH TWITCH, downgrade to 3.0.3 or set up a different default video playyer**
+
 A simple app to display Live channels through Rofi. My attempt at giving back to the open source community. Disclaimer: the app is not as cool as the name is.
 
 ## How to install
