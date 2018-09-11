@@ -20,7 +20,8 @@ then
     -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
     -X GET "https://api.twitch.tv/kraken/users?login=$channel" | jq -c '.users[] | ._id' | tr -d '"' )
     live=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
-    -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \ -X GET "https://api.twitch.tv/kraken/streams/$id"| jq -j '.stream'| tr -d "\n")
+    -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \ -X GET "https://api.twitch.tv/kraken/streams/$id"| jq -r '.stream')
+    echo $live
     if  [[ $live != "null"* ]]; then
 	live="Channel is live, click me to watch"
     else
@@ -43,7 +44,7 @@ fi
 if [[ $vod_mode = "true" ]] ;
 then
     echo $channel
-    if [[ $video = "Live" ]] ; then
+    if [[ $video = "watch" ]] ; then
 	echo xdxd
 	streamlink www.twitch.tv/$channel $picked_quality &
     else
