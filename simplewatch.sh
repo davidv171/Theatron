@@ -1,3 +1,8 @@
+if [[ $1 = "-v" ]]
+then
+    echo "0.5"
+    exit 0
+fi
 cd $(dirname "$0")
 config=$(readlink -f config.sh)
 source $config
@@ -7,13 +12,10 @@ oauth="$(cat oauth|tr -d '\n')"
 	-H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
 	-H "Authorization: OAuth $oauth" \ -X GET 'https://api.twitch.tv/kraken/streams/followed' | jq -c '.streams[] | {"":.channel | {Streamer: .name,playing: .game}, for: .viewers, viewers: .video_height}'  |tr -d '{' | tr -d '}' |tr '"' ' '|tr -d ','| tr -d ':' | awk '{print $0"p"}'| rofi -dmenu)
     not_following=$(echo $channel | awk '{print $2}')
-if [ -z $not_following ];then
-    echo $xd
-else
+if [[ -n $not_following ]];then
     channel=$not_following
 fi
-
-if [ $vod_mode = "true" ]
+if [[ $vod_mode = "true" ]]
     #čšć is used to sanitize output easier, so we don't remove every : but only the json key:value colon
 then
     id=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
@@ -21,7 +23,6 @@ then
     -X GET "https://api.twitch.tv/kraken/users?login=$channel" | jq -c '.users[] | ._id' | tr -d '"' )
     live=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
     -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \ -X GET "https://api.twitch.tv/kraken/streams/$id"| jq -r '.stream')
-    echo $live
     if  [[ $live != "null"* ]]; then
 	live="Channel is live, click me to watch"
     else
@@ -31,8 +32,7 @@ then
 	-H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
 	-H "Authorization: OAuth $oauth" \ -X GET "https://api.twitch.tv/kraken/channels/$id/videos?limit=$vod_mode_limit" | jq -c '.videos[] | {"čšć" : .title, "(čšć": .created_at, ") čšć": .url}'|tr -d '{' | tr -d '}' | tr ',' ' ' | tr -d '"' | sed 's/čšć://g' | printf "%s\n%s" "$live" "$(cat -)" | rofi -dmenu | awk 'NF>0{print $NF}')
 fi
-echo $channel
-echo $video
+
 picked_quality="best"
 if [ $always_best = "false" ] ;
 then
