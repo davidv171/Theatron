@@ -15,6 +15,10 @@ oauth="$(cat oauth|tr -d '\n')"
 if [[ -n $not_following ]];then
     channel=$not_following
 fi
+if [[ -z $channel ]]
+then
+    exit 1
+fi
 if [[ $vod_mode = "true" ]]
     #čšć is used to sanitize output easier, so we don't remove every : but only the json key:value colon
 then
@@ -30,11 +34,10 @@ then
     fi
     video=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
 	-H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
-	-H "Authorization: OAuth $oauth" \ -X GET "https://api.twitch.tv/kraken/channels/$id/videos?limit=$vod_mode_limit" | jq -c '.videos[] | {"čšć" : .title, "(čšć": .created_at, ") čšć": .url}'|tr -d '{' | tr -d '}' | tr ',' ' ' | tr -d '"' | sed 's/čšć://g' | printf "%s\n%s" "$live" "$(cat -)" | rofi -dmenu | awk 'NF>0{print $NF}')
+	-H "Authorization: OAuth $oauth" \ -X GET "https://api.twitch.tv/kraken/channels/$id/videos?limit=$vod_mode_limit" | jq -c --unbuffered '.videos[] | {"čšć" : .title, "(čšć": .created_at, ") čšć": .url}'|tr -d '{' | tr -d '}' | tr ',' ' ' | tr -d '"' | sed 's/čšć://g' | printf "%s\n%s" "$live" "$(cat -)" | rofi -dmenu | awk 'NF>0{print $NF}')
 fi
-
 picked_quality="best"
-if [ $always_best = "false" ] ;
+if [[ $always_best = "false"  &&  -n $video ]];
 then
     picked_quality="$(echo -e $quality | rofi -dmenu)"
 fi
@@ -43,14 +46,11 @@ if [ $popup_chat = "true" ] ;then
 fi
 if [[ $vod_mode = "true" ]] ;
 then
-    echo $channel
     if [[ $video = "watch" ]] ; then
-	echo xdxd
 	streamlink www.twitch.tv/$channel $picked_quality &
     else
 	streamlink $video $picked_quality &
-    fi
-   
+    fi  
 else
     streamlink www.twitch.tv/$channel $picked_quality &
 fi
