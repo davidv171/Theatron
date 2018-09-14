@@ -1,6 +1,6 @@
 if [[ $1 = "-v" ]]
 then
-    echo "0.5"
+    echo "0.5.1"
     exit 0
 fi
 cd $(dirname "$0")
@@ -41,7 +41,7 @@ if [[ $always_best = "false"  &&  -n $video ]];
 then
     picked_quality="$(echo -e $quality | rofi -dmenu)"
 fi
-if [ $popup_chat = "true" ] ;then
+if [[ $popup_chat = "true" || $1 = "-p" ]] ;then
     xdg-open https://www.twitch.tv/popout/$channel/chat?popout= 
 fi
 if [[ $vod_mode = "true" ]] ;

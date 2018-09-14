@@ -44,6 +44,16 @@ Use arrows or type into the search bar. You can type in a string that is NOT ON 
 
 Imaqtpie into the search bar and press enter. Hopefully streamlink will load up the video too. 
 
+## Flags
+
+sh streamlink.sh -v 
+
+Outputs the version of the main script(notification script probably will not be updated a lot if at all, so it doesnt need versioning for now).
+
+sh streamlink.sh -p
+
+Should popout chat no matter what your config says. 
+
 ## Configuration
 
 The repo contains an example configuration. The comments should explain everything. Just like the oauth file this needs to be in the same directory as the script. 
