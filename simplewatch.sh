@@ -6,7 +6,7 @@ fi
 cd $(dirname "$0")
 config=$(readlink -f config.sh)
 source $config
-quality="best\n720p60\n720p\n480p\n360p\naudio_only"
+quality="best\n1080p60\n1080p\n720p60\n720p\n480p\n360p\naudio_only"
 oauth="$(cat oauth|tr -d '\n')"
     channel=$(curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
 	-H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
@@ -42,17 +42,23 @@ then
     picked_quality="$(echo -e $quality | rofi -dmenu)"
 fi
 if [[ $popup_chat = "true" || $1 = "-p" ]] ;then
-    xdg-open https://www.twitch.tv/popout/$channel/chat?popout= 
+    xdg-open https://www.twitch.tv/popout/$channel/chat?popout=
 fi
 if [[ $vod_mode = "true" ]] ;
 then
     if [[ $video = "watch" ]] ; then
-	streamlink www.twitch.tv/$channel $picked_quality &
+	streamlink www.twitch.tv/$channel $picked_quality --player $player |& while read -r line
+    do
+	notify-send "Theatron" "$line"
+    done
     else
-	streamlink $video $picked_quality &
-    fi  
+	streamlink $video $picked_quality --player $player  |& while read -r line
+    do
+	notify-send "Theatron" "$line"
+    done
+    fi
 else
-    streamlink www.twitch.tv/$channel $picked_quality &
+    streamlink www.twitch.tv/$channel $picked_quality  --player $player
 fi
 
 
