@@ -1,6 +1,6 @@
 if [[ $1 = "-v" ]]
 then
-    echo "0.5.1"
+    echo "0.5.2"
     exit 0
 fi
 cd $(dirname "$0")
@@ -47,6 +47,7 @@ fi
 if [[ $vod_mode = "true" ]] ;
 then
     if [[ $video = "watch" ]] ; then
+	#Thanks ahrs & diamond
 	streamlink www.twitch.tv/$channel $picked_quality --player $player |& while read -r line
     do
 	notify-send "Theatron" "$line"
