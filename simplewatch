@@ -54,17 +54,11 @@ if [[ $vod_mode = "true" ]] ;
 then
     if [[ $video = "watch" ]] ; then
 	#Thanks ahrs & diamond
-	streamlink www.twitch.tv/$channel $picked_quality --player $player |& while read -r line
-    do
-	notify-send "Theatron" "$line"
-    done
+	mpv https://www.twitch.tv/$channel --ytdl-format=$picked_quality
     else
-	streamlink $video $picked_quality --player $player  |& while read -r line
-    do
-	notify-send "Theatron" "$line"
-    done
+	mpv https://www.twitch.tv/$channel --ytdl-format=$picked_quality
     fi
 else
-    streamlink www.twitch.tv/$channel $picked_quality  --player $player
+    mpv https://www.twitch.tv/$channel --ytdl-format=$picked_quality
 fi
 # vim: ft=sh
