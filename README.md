@@ -109,6 +109,27 @@ Or I will implement it when I get bored.
 
 Notifications script mostly only relies on jq and curl. After that it sends a "notify-send" that is then taken care of by a notification daemon.
 
+## Clipping
+
+Authentication for clipping capabilities is a  bit more complicated. What you're going to need is a token that gives you editing clip privileges. But here is how you obtain the token(and put it into your oauth file):
+
+If you already have an oauth file and have just decided you want clipping privileges, what you should do is:
+    - delete your existing oauth
+    - run simplewatch again
+
+This bit applies to both your first time running the program and when you changed your mind about clips:
+
+    - running simplewatch opens up your browser, opening an authentication link
+    - log in, or if you weren't asked to log in and were redirected to the gitlab page, proceed to the next stage
+    - this is the tricky part, **COPY THE TOKEN VALUE FROM THE URL** (This might change if I get a website or something, bear with me)
+
+TL;DR:
+https://gitlab.com/davidv171/Theatron#access_token=XXX&scope=clips%3Aedit&token_type=bearer
+
+Put the XXX into your oauth file.
+
+After that run clipit with bash. This should trigger your browser with the opened up clip editor. You should know the drill after that.
+
 ## TODO
 
 - Extensibility, modularity, basically let the user decide on every part of the program
@@ -116,4 +137,5 @@ Notifications script mostly only relies on jq and curl. After that it sends a "n
 - Usability without oauth! This will probably be implemented in python
 
 - Let user decide on output
+
 
