@@ -1,7 +1,8 @@
 #!/bin/bash
 cd $(dirname "$0")
 interval=60
-notify_me="reckful,imaqtpie,strawbunnyhunny,pokimane,sodapoppin,methodjosh,nerites"
+# Add strings for people you want to be notified about, ex. notify_me="imaqtpie,reckful"
+notify_me="reckful,imaqtpie,strawbunnyhunny,pokimane,sodapoppin,methodjosh,nerites,forsen"
 while true
 do
     id=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \

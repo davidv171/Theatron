@@ -12,10 +12,18 @@ oauth="$(cat oauth|tr -d '\n')"
 if [[ -z $oauth ]]
 then
     echo "ERROR: Missing oauth, use theatron-offline"
+    notify-send "Theatron" "Copy the token into a file called oauth"
+    if [[ $clip_capabilities = "true" ]] ;then
+	scope="clips:edit"
+	auth_url="https://id.twitch.tv/oauth2/authorize?client_id=$client_id&redirect_uri=$redirect_uri&response_type=token&scope=$scope"
+	echo "Auth url"
+	echo $auth_url
+	xdg-open "$auth_url"
+    fi
     exit 1
 fi
     channel=$(curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
-	-H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
+	-H "Client-ID: $client_id" \
 	-H "Authorization: OAuth $oauth" \ -X GET 'https://api.twitch.tv/kraken/streams/followed' | jq -c '.streams[] | {"":.channel | {"Streamer ": .name , " playing ": .game}, " for ": .viewers, " viewers ": .video_height}'  | tr -d '\{\}\:\"\,'  | awk '{print $0"p"}'| rofi -dmenu)
     not_following=$(echo $channel | awk '{print $2}')
 if [[ -n $not_following ]];then
@@ -38,6 +46,7 @@ then
     else
 	live="Channel is not yet live, use polling service and wait :( "
     fi
+    echo "$id" > currentBroadcasterId.txt
     video=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
 	-H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
 	-X GET "https://api.twitch.tv/kraken/channels/$id/videos?limit=$vod_mode_limit" | jq -c --unbuffered '.videos[] | {"čšć" : .title, " (čšć": .created_at, ") čšć": .url}' | tr -d '\{\}\"\,' | sed 's/čšć://g' | printf "%s\n%s" "$live" "$(cat -)" | rofi -dmenu | awk 'NF>0{print $NF}')
@@ -50,15 +59,6 @@ fi
 if [[ $popup_chat = "true" || $1 = "-p" ]] ;then
     xdg-open https://www.twitch.tv/popout/$channel/chat?popout=
 fi
-if [[ $vod_mode = "true" ]] ;
-then
-    if [[ $video = "watch" ]] ; then
 	#Thanks ahrs & diamond
-	mpv https://www.twitch.tv/$channel --ytdl-format=$picked_quality
-    else
-	mpv https://www.twitch.tv/$channel --ytdl-format=$picked_quality
-    fi
-else
-    mpv https://www.twitch.tv/$channel --ytdl-format=$picked_quality
-fi
+    streamlink https://www.twitch.tv/$channel $picked_quality -p=$player $streamlink_flags
 # vim: ft=sh
