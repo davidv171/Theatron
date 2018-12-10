@@ -1,20 +1,24 @@
+#!/bin/bash
 cd $(dirname "$0")
-config=$(readlink -f notifconf.sh)
-source $config
+interval=60
+# Add strings for people you want to be notified about, ex. notify_me="imaqtpie,reckful"
+notify_me="reckful,imaqtpie,strawbunnyhunny,pokimane,sodapoppin,methodjosh,nerites,forsen"
 while true
-do  
+do
     id=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
     -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
     -X GET "https://api.twitch.tv/kraken/users?login=$notify_me" | jq -c '.users[] |._id'| tr -d '"' | tr '\n' ',')
     live=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
     -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
-    -X GET "https://api.twitch.tv/kraken/streams/?channel=$id" | jq -c '.streams[] | .channel | {Streamer : .name , playing : .game}' | tr -d '{' | tr -d '}' | tr ',' ' ' | tr -d '"' | tr ':' ' ')
+    -X GET "https://api.twitch.tv/kraken/streams/?channel=$id" | jq -c '.streams[] | .channel | {"": .name , " playing " : .game}' | tr -d '\{\}\,\"\:' | awk '{print $0"\n"}')
+    echo $live
     if [ -z "$live" ]; then
 	echo "No one is on"
     else
 	notify-send "Theatron" "$live"
-	name=$(echo $live | awk '{print $2","}')
+	name=$(echo $live | awk '{print $1}')
 	notify_me="${notify_me//$name}"
+	echo $notify_me
     fi
     sleep $interval
 done
