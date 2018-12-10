@@ -4,6 +4,12 @@ always_best=false
 #The default player used by streamlink with the latest breakage of VLC we can't rely on it anymore :(
 player="mpv"
 
+#The default application launcher, currently tested on: rofi, dmenu, smenu. Only use 1 at a time
+#For the main 3:
+#launcher="rofi -dmenu"
+#launcher="dmenu"
+#launcher="smenu -t"
+launcher="smenu -t"
 #if this is on, every time you pick a streamer, you will get vod menu after you pick a streamer, the first entry should still be the live stream
 vod_mode=true
 

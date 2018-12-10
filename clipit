@@ -10,6 +10,14 @@ clip=$(curl -s \
 	-H "Client-ID: $client_id" \
 	-H "Authorization: Bearer $oauth" \
 	-X POST "https://api.twitch.tv/helix/clips?broadcaster_id=$broadcast_id" | jq -c '.data[] | {"":.edit_url}' | tr -d '\"\{\}')
+if [[ -z $clip ]] ;then
+    notify-send "Theatron" "Either the streamer isn't online or you're not watching anyone"
+fi
+
+#Delete the first character(:)
 clip="${clip:1}"
 xdg-open $clip
 # vim: ft=sh
+#
+
+#curl -H "Authorization: OAuth <access token>" https://id.twitch.tv/oauth2/validate
