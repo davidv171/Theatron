@@ -4,27 +4,24 @@ then
     echo "0.6.0"
     exit 0
 fi
-cd $(dirname "$0")
-config=$(readlink -f config.sh)
-source $config
+source ./config.sh
 quality="best\n1080p60\n1080p\n720p60\n720p\n480p\n360p\naudio_only"
 oauth="$(cat oauth|tr -d '\n')"
 if [[ -z $oauth ]]
 then
     echo "ERROR: Missing oauth, use theatron-offline"
-    notify-send "Theatron" "Copy the token into a file called oauth"
     if [[ $clip_capabilities = "true" ]] ;then
 	scope="clips:edit"
 	auth_url="https://id.twitch.tv/oauth2/authorize?client_id=$client_id&redirect_uri=$redirect_uri&response_type=token&scope=$scope"
 	echo "Auth url"
 	echo $auth_url
-	xdg-open "$auth_url"
+	open "$auth_url"
     fi
     exit 1
 fi
 smenucheck=$(echo $launcher | awk '{print $1}')
 echo $smenucheck
-if [ $smenucheck = "smenu" ];then
+if [[ $smenucheck = "smenu" ]] ;then
     echo "Smenu detected"
     channel=$(curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
 	-H "Client-ID: $client_id" \
@@ -49,7 +46,6 @@ else
 if [[ -z $channel ]]
 then
     exit 1
-    notify-send "Theatron" "Didn't pick anything"
 fi
 if [[ $vod_mode = "true" ]]
     #čšć is used to sanitize output easier, so we don't remove every : but only the json key:value colon
@@ -82,7 +78,7 @@ then
     picked_quality="$(echo -e $quality | $launcher)"
 fi
 if [[ $popup_chat = "true" || $1 = "-p" ]] ;then
-    xdg-open https://www.twitch.tv/popout/$channel/chat?popout=
+    open https://www.twitch.tv/popout/$channel/chat?popout=
 fi
     streamlink https://www.twitch.tv/$channel $picked_quality -p=$player $streamlink_flags
 # vim: ft=sh
