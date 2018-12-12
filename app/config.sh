@@ -9,7 +9,7 @@ player="mpv"
 #launcher="rofi -dmenu"
 #launcher="dmenu"
 #launcher="smenu -t"
-launcher="smenu -t"
+launcher="choose"
 #if this is on, every time you pick a streamer, you will get vod menu after you pick a streamer, the first entry should still be the live stream
 vod_mode=true
 
