@@ -66,9 +66,10 @@ Imaqtpie into the search bar and press enter. Hopefully streamlink will load up 
 
 Outputs the version of the main script(notification script probably will not be updated a lot if at all, so it doesnt need versioning for now).
 
--o
+-p
 
-This enters offline mode. This will not query your followed streams, but will make you pick from a list of streamers, specified in your config. Use the notification service to know who's live.
+This enters private mode. This will not query your followed streams, but will make you pick from a list of streamers, specified in your config. Use the notification service to know who's live.
+Adding separate functionality no the main script might make it a bit too bloated and hard to read.
 
 sh streamlink -p
 
