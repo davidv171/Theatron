@@ -11,7 +11,7 @@ quality="best\n1080p60\n1080p\n720p60\n720p\n480p\n360p\naudio_only"
 oauth="$(cat oauth|tr -d '\n')"
 if [[ -z $oauth ]]
 then
-    echo "ERROR: Missing oauth, use theatron -o"
+    echo "ERROR: Missing oauth, use theatron -p if you want to enter private mode"
     notify-send "Theatron" "Copy the token into a file called oauth"
     if [[ $clip_capabilities = "true" ]] ;then
 	scope="clips:edit"
@@ -36,8 +36,8 @@ if [ $smenucheck = "smenu" ];then
 	| $launcher)
 else
     #Offline mode
-    if [[ $1 == "-o" || $1 == "--offline" ]] ;then
-	echo "Entering offline mode, check config for list of channels"
+    if [[ $1 == "-p" || $1 == "--private" ]] ;then
+	echo "Entering private mode, check config for list of channels"
 	channel="$(echo -e $following | $launcher)"
     else
 	channel=$(curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
@@ -74,7 +74,7 @@ then
     else
 	live="Channel is not yet live, use polling service and wait :( "
     fi
-    echo "$id" > currentBroadcasterId.txt
+    echo "$id" > bId.txt
     video=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
 	-H "Client-ID: $client_id" \
 	-X GET "https://api.twitch.tv/kraken/channels/$id/videos?limit=$vod_mode_limit"\
