@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $1 = "-v" ]]
 then
-    echo "0.6.0"
+    echo "0.7.0"
     exit 0
 fi
 cd $(dirname "$0")
@@ -11,7 +11,7 @@ quality="best\n1080p60\n1080p\n720p60\n720p\n480p\n360p\naudio_only"
 oauth="$(cat oauth|tr -d '\n')"
 if [[ -z $oauth ]]
 then
-    echo "ERROR: Missing oauth, use theatron-offline"
+    echo "ERROR: Missing oauth, use theatron -o"
     notify-send "Theatron" "Copy the token into a file called oauth"
     if [[ $clip_capabilities = "true" ]] ;then
 	scope="clips:edit"
@@ -24,6 +24,7 @@ then
 fi
 smenucheck=$(echo $launcher | awk '{print $1}')
 echo $smenucheck
+#If the used launcher is smenu we only provide partial functionality, because smenu is weird and doesnt want to to what i tell it to :rage:
 if [ $smenucheck = "smenu" ];then
     echo "Smenu detected"
     channel=$(curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
@@ -34,20 +35,26 @@ if [ $smenucheck = "smenu" ];then
 	| tr -d '\{\}\:\"\,'\
 	| $launcher)
 else
-    channel=$(curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
-	-H "Client-ID: $client_id" \
-	-H "Authorization: OAuth $oauth" \
-	-X GET 'https://api.twitch.tv/kraken/streams/followed'\
-	| jq -c '.streams[] | {"":.channel | {"Streamer ": .name , " playing ": .game}, " for ": .viewers, " viewers ": .video_height}'\
-	| tr -d '\{\}\:\"\,'\
-	| awk '{print $0"p"}'\
-	| $launcher)
-    not_following=$(echo $channel | awk '{print $2}')
-    if [[ -n $not_following ]];then
-    channel=$not_following
+    #Offline mode
+    if [[ $1 == "-o" || $1 == "--offline" ]] ;then
+	echo "Entering offline mode, check config for list of channels"
+	channel="$(echo -e $following | $launcher)"
+    else
+	channel=$(curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
+	    -H "Client-ID: $client_id" \
+	    -H "Authorization: OAuth $oauth" \
+	    -X GET 'https://api.twitch.tv/kraken/streams/followed'\
+	    | jq -c '.streams[] | {"":.channel | {"Streamer ": .name , " playing ": .game}, " for ": .viewers, " viewers ": .video_height}'\
+	    | tr -d '\{\}\:\"\,'\
+	    | awk '{print $0"p"}'\
+	    | $launcher)
+	    not_following=$(echo $channel | awk '{print $2}')
+	if [[ -n $not_following ]];then
+	channel=$not_following
+	fi
     fi
-if [[ -z $channel ]]
-then
+fi
+if [[ -z $channel ]];then
     exit 1
     notify-send "Theatron" "Didn't pick anything"
 fi
@@ -59,7 +66,7 @@ then
     -X GET "https://api.twitch.tv/kraken/users?login=$channel"\
     | jq -c '.users[] | ._id' | tr -d '"' )\
     live=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
-    -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
+    -H "Client-ID: $client_id" \
     -X GET "https://api.twitch.tv/kraken/streams/$id"\
     | jq -r '.stream')
     if  [[ $live != "null"* ]]; then
@@ -69,12 +76,11 @@ then
     fi
     echo "$id" > currentBroadcasterId.txt
     video=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
-	-H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
+	-H "Client-ID: $client_id" \
 	-X GET "https://api.twitch.tv/kraken/channels/$id/videos?limit=$vod_mode_limit"\
 	| jq -c --unbuffered '.videos[] | {"čšć" : .title, " (čšć": .created_at, ") čšć": .url}'\
 	| tr -d '\{\}\"\,' | sed 's/čšć://g' \
 	| printf "%s\n%s" "$live" "$(cat -)" | $launcher | awk 'NF>0{print $NF}')
-fi
 fi
 picked_quality="best"
 if [[ $always_best = "false" ]];
@@ -84,5 +90,10 @@ fi
 if [[ $popup_chat = "true" || $1 = "-p" ]] ;then
     xdg-open https://www.twitch.tv/popout/$channel/chat?popout=
 fi
+    if [[ -z $channel ]];then
+	echo "No channel picked."
+	exit 1
+    else
     streamlink https://www.twitch.tv/$channel $picked_quality -p=$player $streamlink_flags
+fi
 # vim: ft=sh
