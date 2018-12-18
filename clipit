@@ -2,10 +2,10 @@
 #Creates a clip of the currently watched streamer, opens the editor with xdg-open
 #In case we're calling the clipit function without watching a stream first
 cd $(dirname "$0")
-config=$(readlink -f config.sh)
+config=$(readlink -f config)
 source $config
 oauth="$(cat oauth|tr -d '\n')"
-broadcast_id=$(cat currentBroadcasterId.txt)
+broadcast_id=$(cat bId.txt)
 clip=$(curl -s \
 	-H "Client-ID: $client_id" \
 	-H "Authorization: Bearer $oauth" \

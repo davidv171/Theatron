@@ -44,11 +44,11 @@ else
 	    -H "Client-ID: $client_id" \
 	    -H "Authorization: OAuth $oauth" \
 	    -X GET 'https://api.twitch.tv/kraken/streams/followed'\
-	    | jq -c '.streams[] | {"":.channel | {"Streamer ": .name , " playing ": .game}, " for ": .viewers, " viewers ": .video_height}'\
+	    | jq -c '.streams[] | {"":.channel | {"": .name , " playing ": .game}, " for ": .viewers, " viewers ": .video_height}'\
 	    | tr -d '\{\}\:\"\,'\
 	    | awk '{print $0"p"}'\
 	    | $launcher)
-	    not_following=$(echo $channel | awk '{print $2}')
+	    not_following=$(echo $channel | awk '{print $1}')
 	if [[ -n $not_following ]];then
 	channel=$not_following
 	fi
