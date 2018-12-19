@@ -4,7 +4,7 @@
 
 **NEWEST VLC VERSION(3.0.4-0) does NOT WORK WITH TWITCH, downgrade to 3.0.3 or set up a different default video playyer**
 
-A simple app to display Live channels through Rofi. My attempt at giving back to the open source community. Disclaimer: the app is not as cool as the name is.
+A simple app to display Live channels through a terminal GUI picker. My attempt at giving back to the open source community. Disclaimer: the app is not as cool as the name is.
 
 ## Yeah but how does it look like?
 
@@ -15,13 +15,13 @@ Here's a demo:
 
 ## How to install
 
-Currently all we have is a file. If you have streamlink + rofi, add a file called `oauth` in the project root folder. Run it with//whateve.
+For MacOS, the best terminal gui picker we've found is Choose (https://github.com/sdegutis/choose)
 
-Let's assume you're using Arch Linux.
+Currently all we have is a file. If you have streamlink + choose, add a file called `oauth` in the project root folder. Run it with//whateve.
 
 The easiest way to install the dependencies is:
 
-`sudo pacman -S streamlink rofi jq`
+`brew install streamlink choose jq`
 
 After you're done installing or during(if you have bad internet),visit:
 
