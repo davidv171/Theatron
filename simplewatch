@@ -1,7 +1,55 @@
 #!/bin/bash
+getFollowingChannels() {
+     curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
+        -H "Client-ID: $client_id" \
+        -H "Authorization: OAuth $oauth" \
+        -X GET "https://api.twitch.tv/kraken/streams/followed"\
+        | jq -c '.streams[] | {"":.channel | {"Streamer ": .name , " playing ": .game}, " for ": .viewers, " viewers ": .video_height}'\
+        | tr -d '\{\}\:\"\,'\
+        | awk '{print $0"p"}'
+}
+
+getTwitchUserId() {
+    curl -H 'Accept: application/vnd.twitchtv.v5+json' \
+        -H "Client-ID: $client_id" \
+        -H "Authorization: OAuth $oauth" \
+        -X GET "https://api.twitch.tv/kraken/user" \
+        | jq -c '. | ._id' \
+        | tr -d '"'
+}
+
+# First argument must be the twitch user id
+getFollowingGames() {
+    curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
+       -H "Client-ID: $client_id" \
+       -H "Authorization: OAuth $oauth" \
+       -X GET "https://api.twitch.tv/kraken/users/${1}/follows/games" \
+       | jq -c '.follows[] | {"": .game.popularity, " viewers - ": .game.name}' \
+       | tr -d '\{\}\:\"\,'
+}
+
+# First argument must be the game's name
+getChannelsFromGame() {
+    curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
+        -H "Client-ID: $client_id" \
+        -H "Authorization: Oauth $oauth" \
+        -X GET "https://api.twitch.tv/kraken/streams?game=${1}" \
+        | jq -c '.streams[] | {"":.channel | {"Streamer ": .name , " playing ": .game}, " for ": .viewers, " viewers ": .video_height}'\
+        | tr -d '\{\}\:\"\,'\
+        | awk '{print $0"p"}'
+}
+
+getAllGames() {
+    curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
+        -H "Client-ID: $client_id" \
+        -H "Authorization: OAuth $oauth" \
+        -X GET 'https://api.twitch.tv/kraken/games/top?limit=100' \
+        | jq -c '.top[] | {"": .viewers, " viewers - ": .game.name}' \
+        | tr -d '\{\}\:\"\,'
+}
 if [[ $1 = "-v" ]]
 then
-    echo "0.7.0"
+    echo "0.8.0"
     exit 0
 fi
 cd $(dirname "$0")
@@ -14,7 +62,7 @@ then
     echo "ERROR: Missing oauth, use theatron -p if you want to enter private mode"
     notify-send "Theatron" "Copy the token into a file called oauth"
     if [[ $clip_capabilities = "true" ]] ;then
-	scope="clips:edit"
+	scope="clips:edit+user:edit"
 	auth_url="https://id.twitch.tv/oauth2/authorize?client_id=$client_id&redirect_uri=$redirect_uri&response_type=token&scope=$scope"
 	echo "Auth url"
 	echo $auth_url
@@ -38,20 +86,80 @@ else
     #Offline mode
     if [[ $1 == "-p" || $1 == "--private" ]] ;then
 	echo "Entering private mode, check config for list of channels"
+	#TODO: Make it possible to enter token into rofi
 	channel="$(echo -e $following | $launcher)"
     else
-	channel=$(curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
-	    -H "Client-ID: $client_id" \
-	    -H "Authorization: OAuth $oauth" \
-	    -X GET 'https://api.twitch.tv/kraken/streams/followed'\
-	    | jq -c '.streams[] | {"":.channel | {"": .name , " playing ": .game}, " for ": .viewers, " viewers ": .video_height}'\
-	    | tr -d '\{\}\:\"\,'\
-	    | awk '{print $0"p"}'\
-	    | $launcher)
-	    not_following=$(echo $channel | awk '{print $1}')
-	if [[ -n $not_following ]];then
-	channel=$not_following
+    # Check if user wants to see content he's following or not
+    if [[ $default_browse_type = '' ]]; then
+	browse_type_options="Channels you're following\nGames you're following\nAll games"
+	browse_type=$()
+	browse_type=$(echo -e "$browse_type_options" | $launcher)
+	echo "Selected $browse_type"
+    else
+	browse_type=$default_browse_type
+    fi
+    # If user wants to browse the channels they follow
+    if [[ $browse_type = "Channels you're following" ]]; then
+	# Get all the channels the user follows
+	channel=$(getFollowingChannels | $launcher)
+    # If user wants to browse the games they follow
+    elif [[ $browse_type = "Games you're following" ]]; then
+	# Get the user id, which is needed to get the followed games
+	echo "Getting your user ID..."
+	user_id=$(getTwitchUserId)
+	if [[ -z $user_id ]]; then
+	    notify-send "You need a new token, remove oauth file and restart the app"
+	    exit 1
 	fi
+	# Get the games the user is following, note: the amount of viewers does not reflect the live amount (delayed)
+	echo "Getting the games you follow..."
+	games=$(getFollowingGames $user_id)
+	if [[ -z $games ]]
+	    then
+		games="You're not following any games, choose me to browse top channels instead"
+		#User exited rofi/launcher without selecting anything, close
+	    fi
+	game=$( echo $games | $launcher )
+	if [[ -z $game ]]
+        then
+	    exit 1
+	fi
+	game_name=$(echo ${game#*viewers - })
+	game_formatted=$(echo ${game_name} | jq -s -R -r @uri | rev | cut -c4- | rev)
+	# Get the channels from the selected game
+	echo "Getting the channels from ${game_name}..."
+	channel=$(getChannelsFromGame ${game_formatted} | $launcher)
+	#Check for empty pick
+	if [[ -z $channel ]]
+	    then
+		notify-send "You need to pick a channel..."
+		exit 1
+	    fi
+
+    # If the user wants to browse every game on Twitch
+    elif [[ $browse_type = "All games" ]]; then
+	# Get all the games (top 100 by most viewers)
+	# TODO: make more requests after the first 100
+	echo 'Getting all games...'
+	game=$(getAllGames | $launcher)
+	if [[ -z $game ]]
+	then
+	    notify-send "Selection cancelled"
+	    exit 1
+	fi
+	game_name=$(echo ${game#*viewers - })
+	game_formatted=$(echo ${game_name} | jq -s -R -r @uri | rev | cut -c4- | rev)
+	# Get the channels from the selected game
+	echo "Getting the channels from ${game_name}..."
+	channel=$(getChannelsFromGame ${game_formatted} | $launcher)
+    fi
+    not_following=$(echo $channel | awk '{print $2}')
+if [[ -n $not_following ]]; then
+    channel=$not_following
+fi
+if [[ -z $channel ]]; then
+    exit 1
+fi
     fi
 fi
 if [[ -z $channel ]];then
@@ -62,7 +170,7 @@ if [[ $vod_mode = "true" ]]
     #čšć is used to sanitize output easier, so we don't remove every : but only the json key:value colon
 then
     id=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
-    -H 'Client-ID: fendbm5b5q1c2820m59sbdv9z95vs4' \
+    -H "Client-ID: $client_id" \
     -X GET "https://api.twitch.tv/kraken/users?login=$channel"\
     | jq -c '.users[] | ._id' | tr -d '"' )\
     live=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
@@ -75,6 +183,7 @@ then
 	live="Channel is not yet live, use polling service and wait :( "
     fi
     echo "$id" > bId.txt
+    #Use ćšć as unique identifiers of what values are and what the keys are
     video=$(curl -H 'Accept: application/vnd.twitchtv.v5+json' \
 	-H "Client-ID: $client_id" \
 	-X GET "https://api.twitch.tv/kraken/channels/$id/videos?limit=$vod_mode_limit"\

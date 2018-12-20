@@ -24,6 +24,15 @@ popup_chat=false
 streamlink_flags="--player-continuous-http"
 #If you want clip capatibilities, if you change this from false to true you will need a new token, easiest way to obtain it is to delete oauth file, because it requires elevated privileges
 clip_capabilities=true
+browse_type_option_followed_channels="Channels you're following"
+browse_type_option_followed_games="Games you're following"
+browse_type_option_all_games="All games"
+#Set the browse type to skip being asked for it every time. Set it to empty to be asked. The options are above.
+default_browse_type=''
+#default_browse_type=$browse_type_option_followed_channels
+#default_browse_type=$browse_type_option_followed_games
+#default_browse_type=$browse_type_option_all_games
+
 #App settings, for global, don't change
 client_id="fendbm5b5q1c2820m59sbdv9z95vs4"
 redirect_uri="https://gitlab.com/davidv171/Theatron"
