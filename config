@@ -16,6 +16,8 @@ vod_mode=true
 
 # How many vods(filtered by recency) to show
 vod_mode_limit="25"
+# How many games you want to see in the list
+game_limit="100"
 # This will only be used for offline mode(flag -o)
 following="imaqtpie\nsodapoppin\nforsen\nasmongold"
  #if true, opens up a browser window with the chat popup mode of the picked streamer, does so not knowingly if the stream loaded or not

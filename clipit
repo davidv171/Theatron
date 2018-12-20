@@ -10,7 +10,7 @@ clip=$(curl -s \
 	-H "Client-ID: $client_id" \
 	-H "Authorization: Bearer $oauth" \
 	-X POST "https://api.twitch.tv/helix/clips?broadcaster_id=$broadcast_id" | jq -c '.data[] | {"":.edit_url}' | tr -d '\"\{\}')
-if [[ -z $clip ]] ;then
+if [[ -z $clip ]];then
     notify-send "Theatron" "Either the streamer isn't online or you're not watching anyone"
 fi
 
