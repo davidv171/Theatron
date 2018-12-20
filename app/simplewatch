@@ -5,9 +5,8 @@ then
     exit 0
 fi
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source $dir/config.sh
-source $dir/rest.sh
-source $dir/utils.sh
+source $dir/config
+source $dir/rest
 quality="best\n1080p60\n1080p\n720p60\n720p\n480p\n360p\naudio_only"
 oauth="$(cat $dir/oauth|tr -d '\n')"
 
