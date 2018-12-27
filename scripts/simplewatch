@@ -76,7 +76,7 @@ if [[ ${smenucheck} = "smenu" ]];then
     echo "Smenu detected"
     channel=$(getFollowingChannels | ${launcher})
 else
-    #Offline mode
+    #Private mode
     if [[ $1 == "-p" || $1 == "--private" ]];then
 	    echo "Entering private mode, check config for list of channels"
 	    #TODO: Make it possible to enter token into rofi
@@ -84,8 +84,7 @@ else
     else
     # Check if user wants to see content he's following or not
         if [[ ${default_browse_type} = '' ]];then
-	        browse_type_options="Channels you're following\nGames you're following\nAll games"
-	        browse_type=$()
+	        browse_type_options="Channels you're following\nGames you're following\nAll games\nAll streams"
 	        browse_type=$(echo -e "$browse_type_options" | ${launcher})
 	    echo "Selected $browse_type"
     else
@@ -154,6 +153,9 @@ else
 	    # Get the channels from the selected game
 	    echo "Getting the channels from ${game_name}..."
 	    channel=$(getChannelsFromGame ${game_formatted} | ${launcher})
+    fi
+    if [[ ${browse_type} = "All streams" ]];then
+	channel=$(getChannelsFromGame | ${launcher})
     fi
     not_following=$(echo ${channel} | awk '{print $2}')
 if [[ -n ${not_following} ]];then
