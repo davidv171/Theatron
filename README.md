@@ -125,7 +125,7 @@ But if you want to launch it from a Terminal, this is how you'd go about it:
 
 Add this to your ~/.zshrc or ~/.bashrc or wheverever you set PATH:
 
-`export PATH=$PATH:~/PATH/TO/THEATRON/`
+`export PATH=$PATH:~/PATH/TO/THEATRON/scripts/`
 
 After that, make sure you have the necessary permissions to run the scripts. So `chown` and `chmod` it so it's owned by the user and executable by the user. I won't be going in depth on how to do this, since it's much better to go reading up on this on your own, you will be using this a lot.
 
