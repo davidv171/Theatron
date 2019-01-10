@@ -34,7 +34,6 @@ getFollowingGames() {
 getChannelsFromGame() {
     curl -s -H 'Accept: application/vnd.twitchtv.v5+json' \
         -H "Client-ID: $client_id" \
-        -H "Authorization: Oauth $oauth" \
         -X GET "https://api.twitch.tv/kraken/streams?game=${1}" \
         | jq -c '.streams[] | {"":.channel | {"Streamer ": .name , " playing ": .game}, " for ": .viewers, " viewers ": .video_height}'\
         | tr -d '\{\}\:\"\,'\
@@ -50,7 +49,7 @@ getAllGames() {
         | tr -d '\{\}\:\"\,'
 }
 if [[ $1 = "-v" ]];then
-    echo "0.8.0"
+    echo "0.9.0"
     exit 0
 fi
 cd $(dirname "$0")
