@@ -42,17 +42,27 @@ Since this is still in early beta, we'll assume you installed using git.
 1. Visit your repository location
 2. Create a new file called `oauth` this is the file name always. Put in your oauth key without the oauth: bit! This is very important if you want a follow list
 3. run  simplewatch`
-4. Hopefully, you did everything right, so itowed you a bunch of streamers you follow that are online, their viewers and their best possible quality! Look at ## Configuration for more
+4. Hopefully, you did everything right, so it showed you a bunch of streamers you follow that are online, their viewers and their best possible quality! Look at ## Configuration for more
 5. Pick a streamer in your rofi menu using arrow keys,search bar + enter or clicking.
 6. Pick a quality(be careful, idly choosing 720p60 even if a streamer's maximum quality is 480p will not work. Ask streamlink. The safest is to use best/worst. That always works.
 7. Streamlink takes over.
-8. Tell me about bugs! This is a small, solo project and I appreciate any sort of bug reports, feature requests or even pull requests!
+8. Tell me about bugs! This is a small, duo project and I appreciate any sort of bug reports, feature requests or even pull requests!
 
 
 
 ## Running the script
 
-This script contains 4 main parts. A notification script(runs in the background andould only notify you when a streamer is coming online) and the simplewatch script. That is the script thatows you the streamers you are following that are currently online. Both need a config file. If you installed this through git, they have the example configs already.
+This script contains 2 main parts. A notification script(runs in the background and would only notify you when a streamer is coming online) and the simplewatch script. That is the script that shows you the streamers you are following that are currently online. Simplewatch needs its own config, while pollingservice can be edited once(in the script itself) and then run with a "once" positional parameter or a number that serves as the interval at which polling is executed.
+
+`sh pollingservice once`
+
+Runs the script once, and displays the notification
+
+`sh pollingservice 5`
+
+Runs the script and checks every 5 seconds about who's online. The positional argument value of 300 would mean 5 minutes of wait time between each check.
+
+If you installed this through git, they have the example configs already. Make sure to edit them to your liking.
 
 If you don't know how Rofi works:
 
@@ -60,7 +70,7 @@ Use arrows or type into the search bar. You can type in a string that is NOT ON 
 
 Imaqtpie into the search bar and press enter. Hopefully streamlink will load up the video too.
 
-## Flags
+## Simplewatch Flags
 
 -v
 
