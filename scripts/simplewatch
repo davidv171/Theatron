@@ -53,8 +53,7 @@ if [[ $1 = "-v" ]];then
     exit 0
 fi
 cd $(dirname "$0")
-config=$(readlink -f config)
-source ${config}
+source config
 quality="best\n1080p60\n1080p\n720p60\n720p\n480p\n360p\naudio_only"
 oauth="$(cat oauth|tr -d '\n')"
 if [[ -z ${oauth} ]];then
