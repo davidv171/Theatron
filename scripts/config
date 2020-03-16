@@ -3,9 +3,10 @@
 always_best=false
 
 #The default player used by streamlink with the latest breakage of VLC we can't rely on it anymore :(
-player="mpv"
+player="vlc"
 
 #The default application launcher, currently tested on: rofi, dmenu, smenu. Only use 1 at a time
+#Works fine with fzf too, but needs to be launched in terminal to work
 #For the main 3:
 #launcher="rofi -dmenu"
 #launcher="dmenu"
@@ -38,4 +39,4 @@ default_browse_type=''
 
 #App settings, for global, don't change
 client_id="fendbm5b5q1c2820m59sbdv9z95vs4"
-redirect_uri="https://gitlab.com/davidv171/Theatron"
+redirect_uri="https://theatron.davidv7.xyz/"

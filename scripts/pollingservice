@@ -24,7 +24,7 @@ function poll(){
 # Hopw many seconds between checks
 
 # Add strings for people you want to be notified about, ex. notify_me="imaqtpie,reckful"
-notify_me="reckful,imaqtpie,strawbunnyhunny,pokimane,sodapoppin,methodjosh,nerites,forsen,asmongold,disguisedtoast,avoidingthepuddle"
+notify_me="reckful,imaqtpie,strawbunnyhunny,pokimane,sodapoppin,methodjosh,nerites,forsen,asmongold,disguisedtoast,avoidingthepuddle,cxlibri"
 if [[ $1 == "once" ]];then
     poll 0
 elif [[ -n $1 ]];then
